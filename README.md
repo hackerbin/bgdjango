@@ -16,3 +16,5 @@ or you can create superuser and load from django admin or shell as well.
 `$ python manage.py shell`  
 `$ from core.models import *`  
 `$ Employee.get_oldest_employee_from_department()`
+
+> email at nurulhudarobin@gmail.com for any query
