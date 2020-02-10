@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.expressions import RawSQL
 
 
 class Department(models.Model):
@@ -6,6 +7,9 @@ class Department(models.Model):
 
     def __str__(self):
         return "{} {}".format(self.id, self.name)
+
+    class Meta:
+        db_table = 'departments'
 
 
 class Employee(models.Model):
@@ -16,6 +20,19 @@ class Employee(models.Model):
     def __str__(self):
         return "{} {}".format(self.id, self.employee_name)
 
-# Employee.objects.all().order_by('department','birthdate').distinct('department')
+    class Meta:
+        db_table = 'employees'
 
-# select * from bgdjango.core_employee where birthdate in ( select MIN(birthdate) from bgdjango.core_employee group by department_id);
+    @staticmethod
+    def get_oldest_employee_from_department():
+        """
+        if db backend is postgres
+        # return Employee.objects.all().order_by('department','birthdate').distinct('department')
+        :return:
+        """
+        employees = Employee.objects.raw(
+            "SELECT * FROM employees where birthdate in ( SELECT MIN(birthdate) from employees GROUP BY department_id)")
+        for employee in employees:
+            print("name={}, birthdate={}, department={}".format(employee.employee_name, employee.birthdate, employee.department.name))
+        return list(employees)
+
