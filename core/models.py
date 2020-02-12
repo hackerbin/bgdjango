@@ -31,7 +31,7 @@ class Employee(models.Model):
         :return:
         """
         employees = Employee.objects.raw(
-            "SELECT * FROM employees where birthdate in ( SELECT MIN(birthdate) from employees GROUP BY department_id)")
+            "SELECT * FROM employees e1 where birthdate = ( SELECT  MIN(birthdate) from employees e2 where e1.department_id = e2.department_id ) group by e1.department_id")
         for employee in employees:
             print("name={}, birthdate={}, department={}".format(employee.employee_name, employee.birthdate, employee.department.name))
         return list(employees)
